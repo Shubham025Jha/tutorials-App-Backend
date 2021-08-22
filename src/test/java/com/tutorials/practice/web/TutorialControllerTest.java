@@ -44,10 +44,13 @@ class TutorialControllerTest {
 		
 		Mockito.when(testRepo.findAll()).thenReturn(list);
 		
+		
 		mockMvc.
 		      perform(MockMvcRequestBuilders.get("/api/tutorials").contentType(MediaType.APPLICATION_JSON)
 		    		  .accept(MediaType.APPLICATION_JSON)).
-		    andExpect(MockMvcResultMatchers.status().isOk());
+		    andExpect(MockMvcResultMatchers.status().isOk())
+		    .andExpect(MockMvcResultMatchers.jsonPath("$.[:1].id").value(1))
+		    .andExpect(MockMvcResultMatchers.jsonPath("$.[1:2].description").value("ABC"));
 	}
 	 
 	@Test
@@ -66,7 +69,8 @@ class TutorialControllerTest {
 		      perform(MockMvcRequestBuilders.get("/api/tutorials?title=xyz")
 		    		  .contentType(MediaType.APPLICATION_JSON)
 		    		  .accept(MediaType.APPLICATION_JSON)).
-		    andExpect(MockMvcResultMatchers.status().isOk());
+		    andExpect(MockMvcResultMatchers.status().isOk())
+		    .andExpect(MockMvcResultMatchers.jsonPath("$.[:1].title").value("xyz"));
 	}
 	
 	@Test
@@ -112,7 +116,9 @@ class TutorialControllerTest {
 		
 		Mockito.when(testRepo.findById(id)).thenReturn(t1);
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/tutorials/5")).andExpect(MockMvcResultMatchers.status().isOk());
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/tutorials/5"))
+		.andExpect(MockMvcResultMatchers.status().isOk())
+		.andExpect(MockMvcResultMatchers.jsonPath("$.id").value(5));
 	}
 	
 	@Test
@@ -125,7 +131,8 @@ class TutorialControllerTest {
 		
 		Mockito.when(testRepo.findById(id)).thenReturn(t1);
 		
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/tutorials/5")).andExpect(MockMvcResultMatchers.status().isNotFound());
+		mockMvc.perform(MockMvcRequestBuilders.get("/api/tutorials/5"))
+		.andExpect(MockMvcResultMatchers.status().isNotFound());
 	}
 	
 	@Test
@@ -155,7 +162,8 @@ class TutorialControllerTest {
 		Mockito.when(testRepo.findByPublished(true)).thenReturn(list);
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/publishedtutorials?published=true"))
-        .andExpect(MockMvcResultMatchers.status().isOk());
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.[:1].published").value(true));
 		
 	}
 	
